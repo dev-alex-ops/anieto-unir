@@ -1,6 +1,6 @@
 pipeline {
     agent none
-    
+
     stages {
         stage('Get code and "build"'){
             agent {label 'Agent1'} 
@@ -8,13 +8,13 @@ pipeline {
                 sh 'whoami'
                 sh 'hostname'
                 echo 'Pulling repo'
-                git 'https://github.com/dev-alex-ops/anieto-unir'
+                sh ' [ -z $(ls -A) ] && git clone https://github.com/dev-alex-ops/anieto-unir . || git pull https://github.com/dev-alex-ops/anieto-unir'
                 stash includes: 'app/**/*', name: 'app'
                 stash includes: 'test/**/*', name: 'test'
                 stash includes: 'pytest.ini', name: 'pytest'
             }
         }
-        
+
         stage('Tests') {
             agent {label 'Agent2' }
             steps {
@@ -38,7 +38,7 @@ pipeline {
                 stash includes: 'junit*.xml', name: 'results'
             }
         }
-        
+
         stage('Render results') {
             agent {label 'Agent1'}
             steps{
