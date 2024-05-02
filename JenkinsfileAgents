@@ -3,12 +3,12 @@ pipeline {
 
     stages {
         stage('Get code and "build"'){
-            agent {label 'Agent1'} 
+            agent any 
             steps {
-                sh 'whoami'
-                sh 'hostname'
+                bat 'whoami'
+                bat 'hostname'
                 echo 'Pulling repo'
-                sh ' [ -z $(ls -A) ] && git clone https://github.com/dev-alex-ops/anieto-unir . || git pull https://github.com/dev-alex-ops/anieto-unir'
+                git 'https://github.com/dev-alex-ops/anieto-unir'
                 stash includes: 'app/**/*', name: 'app'
                 stash includes: 'test/**/*', name: 'test'
                 stash includes: 'pytest.ini', name: 'pytest'
@@ -16,7 +16,7 @@ pipeline {
         }
 
         stage('Tests') {
-            agent {label 'Agent2' }
+            agent {label 'Agent1' }
             steps {
                 sh 'whoami'
                 sh 'hostname'
@@ -28,9 +28,9 @@ pipeline {
                     [ -f test/wiremock/wiremock-standalone-3.5.4.jar ] || wget https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.5.4/wiremock-standalone-3.5.4.jar -P test/wiremock
                     export FLASK_APP=app/api.py
                     (python3 -m flask run &)
-                    sleep 5
+                    sleep 1
                     (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir test/wiremock &)
-                    sleep 5
+                    sleep 1
                     export PYTHONPATH=.
                     python3 -m pytest --junitxml=junit-unit.xml test/unit
                     python3 -m pytest --junitxml=junit-rest.xml test/rest
@@ -40,8 +40,10 @@ pipeline {
         }
 
         stage('Render results') {
-            agent {label 'Agent1'}
+            agent {label 'Agent2'}
             steps{
+                sh 'whoami'
+                sh 'hostname'
                 unstash 'results'
                 junit 'junit*.xml'
                 echo 'Done!'
