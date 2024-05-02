@@ -8,7 +8,7 @@ pipeline {
                 sh 'whoami'
                 sh 'hostname'
                 echo 'Pulling repo'
-                sh ' [ -z $(ls -A) ] && git clone https://github.com/dev-alex-ops/anieto-unir . || git pull https://github.com/dev-alex-ops/anieto-unir'
+                git 'https://github.com/dev-alex-ops/anieto-unir'
                 stash includes: 'app/**/*', name: 'app'
                 stash includes: 'test/**/*', name: 'test'
                 stash includes: 'pytest.ini', name: 'pytest'
