@@ -3,7 +3,7 @@ pipeline {
 
     stages {
         stage('Get code and "build"'){
-            agent any 
+            agent {label: 'Agent1'} 
             steps {
                 bat 'whoami'
                 bat 'hostname'
@@ -16,7 +16,7 @@ pipeline {
         }
 
         stage('Tests') {
-            agent {label 'Agent1' }
+            agent {label 'Agent2' }
             steps {
                 sh 'whoami'
                 sh 'hostname'
@@ -40,7 +40,7 @@ pipeline {
         }
 
         stage('Render results') {
-            agent {label 'Agent2'}
+            agent {label 'Agent1'}
             steps{
                 sh 'whoami'
                 sh 'hostname'
