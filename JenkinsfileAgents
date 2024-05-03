@@ -3,7 +3,7 @@ pipeline {
 
     stages {
         stage('Get code and "build"'){
-            agent {label: 'Agent1'} 
+            agent {label 'Agent1'} 
             steps {
                 bat 'whoami'
                 bat 'hostname'
