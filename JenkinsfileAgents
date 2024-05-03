@@ -5,8 +5,8 @@ pipeline {
         stage('Get code and "build"'){
             agent {label 'Agent1'} 
             steps {
-                bat 'whoami'
-                bat 'hostname'
+                sh 'whoami'
+                sh 'hostname'
                 echo 'Pulling repo'
                 git 'https://github.com/dev-alex-ops/anieto-unir'
                 stash includes: 'app/**/*', name: 'app'
