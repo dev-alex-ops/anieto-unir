@@ -75,7 +75,8 @@ pipeline {
         // Clean after build
             always {
                 node ('Agent1') {
-                    cleanWs(cleanWhenNotBuilt: true,
+                    cleanWs(disableDeferredWipeout: true,
+                        cleanWhenNotBuilt: true,
                         cleanWhenAborted: true,
                         cleanWhenFailure: true,
                         deleteDirs: true,
@@ -86,7 +87,8 @@ pipeline {
                                 [pattern: './*', type: 'INCLUDE']])
                 }
                 node ('Agent2') {
-                    cleanWs(cleanWhenNotBuilt: true,
+                    cleanWs(disableDeferredWipeout: true,
+                        cleanWhenNotBuilt: true,
                         cleanWhenAborted: true,
                         cleanWhenFailure: true,
                         deleteDirs: true,
