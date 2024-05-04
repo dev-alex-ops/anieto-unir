@@ -81,9 +81,8 @@ pipeline {
                         deleteDirs: true,
                         disableDeferredWipeout: true,
                         notFailBuild: true,
-                        patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                                [pattern: '.propsfile', type: 'INCLUDE'],
-                                [pattern: './*', type: 'INCLUDE']])
+                        patterns: [[pattern: '**/*', type: 'INCLUDE'],
+                                [pattern: '.propsfile', type: 'EXCLUDE']])
                 }
                 node ('Agent2') {
                     cleanWs(cleanWhenNotBuilt: true,
@@ -92,9 +91,8 @@ pipeline {
                         deleteDirs: true,
                         disableDeferredWipeout: true,
                         notFailBuild: true,
-                        patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                                [pattern: '.propsfile', type: 'INCLUDE'],
-                                [pattern: './*', type: 'INCLUDE']])
+                        patterns: [[pattern: '**/*', type: 'INCLUDE'],
+                                [pattern: '.propsfile', type: 'EXCLUDE']])
                 }
             }
         }

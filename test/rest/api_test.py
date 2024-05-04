@@ -17,6 +17,8 @@ url_lock = threading.Lock()
 @pytest.mark.api
 class TestApi(unittest.TestCase):
     def setUp(self):
+        # Con With, genero el bloqueo de la URL y no hace el release automático hasta que no termina su contenido indentado. 
+        # Es como un lock() y un release(), pero en solo una instrucción.
         with url_lock:
             self.assertIsNotNone(BASE_URL, "URL no configurada")
             self.assertTrue(len(BASE_URL) > 8, "URL no configurada")
