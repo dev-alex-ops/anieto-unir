@@ -45,7 +45,7 @@ pipeline {
                             export FLASK_APP=app/api.py
                             (python3 -m flask run &)
                             sleep 1
-                            (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir test/wiremock &)
+                            (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --verbose --root-dir test/wiremock &)
                             sleep 1
                             '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
