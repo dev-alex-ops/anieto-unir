@@ -26,7 +26,7 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 export PYTHONPATH=.
-                                python3 -m pytest --junitxml=junit-unit.xml test/unit
+                                python3 -m pytest -r --junitxml=junit-unit.xml test/unit
                             '''
                         }
                     }
@@ -45,13 +45,13 @@ pipeline {
                             export FLASK_APP=app/api.py
                             (python3 -m flask run &)
                             sleep 1
-                            (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --verbose --root-dir test/wiremock &)
+                            (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir test/wiremock &)
                             sleep 1
                             '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                             export PYTHONPATH=.
-                            python3 -m pytest --junitxml=junit-rest.xml test/rest
+                            python3 -m pytest -r --junitxml=junit-rest.xml test/rest
                             '''
                         }
                         stash includes: 'junit*.xml', name: 'Rest'
