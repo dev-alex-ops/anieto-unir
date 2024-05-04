@@ -73,16 +73,17 @@ pipeline {
 
         post {
         // Clean after build
-        always {
-            cleanWs(cleanWhenNotBuilt: true,
-                    cleanWhenAborted: true,
-                    cleanWhenFailure: true,
-                    deleteDirs: true,
-                    disableDeferredWipeout: true,
-                    notFailBuild: true,
-                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                               [pattern: '.propsfile', type: 'INCLUDE'],
-                               [pattern: './*', type: 'INCLUDE']])
+            always {
+                cleanWs(cleanWhenNotBuilt: true,
+                        cleanWhenAborted: true,
+                        cleanWhenFailure: true,
+                        deleteDirs: true,
+                        disableDeferredWipeout: true,
+                        notFailBuild: true,
+                        patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                                [pattern: '.propsfile', type: 'INCLUDE'],
+                                [pattern: './*', type: 'INCLUDE']])
+            }
         }
     }
 }
