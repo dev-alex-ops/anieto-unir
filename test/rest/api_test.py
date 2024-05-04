@@ -75,6 +75,7 @@ class TestApi(unittest.TestCase):
                 self.assertEqual(
                     e.read().decode(), "Error: No se puede dividir por 0", "ERROR DIVIDE"
                 )
+        url_lock.release()
             # Ya que esta conexión nunca se llega a abrir, dado el fallo obligado por el test, no es necesario cerrar la conexión.
 
     def test_api_sqrt(self):
@@ -90,8 +91,6 @@ class TestApi(unittest.TestCase):
                 )
             finally:
                 response.close()
-        
-    url_lock.release()
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
