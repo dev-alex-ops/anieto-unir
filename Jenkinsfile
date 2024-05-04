@@ -1,53 +1,72 @@
 pipeline {
-    agent any
-    environment {
-        PATH = "C:/Users/alsab/AppData/Local/Programs/Python/Python311;$PATH"
-    }
+    agent none
+
     stages {
-        stage('Get code'){
+        stage ('Get code') {
+            agent { label 'Agent1' } 
             steps {
-                git 'https://github.com/dev-alex-ops/anieto-unir'
+                sh 'whoami'
+                sh 'hostname'
+                echo 'Pulling repo'
+                checkout([$class: 'GitSCM', branches: [[name: '*/feature_fix_racecond']],
+                    userRemoteConfigs: [[url: 'https://github.com/dev-alex-ops/anieto-unir.git']]])
+                stash includes: 'app/**/*', name: 'app'
+                stash includes: 'test/**/*', name: 'test'
+                stash includes: 'pytest.ini', name: 'pytest'
             }
         }
-        
-        stage('Build'){
-            steps {
-                echo 'This is Python ;)'
-                bat 'dir'
-            }
-        }
-        
-        stage('Tests'){
+
+        stage('Tests') {
             parallel {
-                stage('Unit tests'){
-                steps {
-                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {    
-                        bat '''
-                            set PYTHONPATH=%WORKSPACE%
-                            python -m pytest --junitxml=result-unit.xml test\\unit
-                        '''
+                stage ('Unit tests') {
+                    agent { label 'Agent1' }
+                    steps {
+                        sh 'whoami'
+                        sh 'hostname'
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            sh '''
+                                export PYTHONPATH=.
+                                python3 -m pytest -rp --junitxml=junit-unit.xml test/unit
+                            '''
                         }
                     }
                 }
-            
-                stage('Service tests'){
+
+                stage ('Service Tests') {
+                    agent { label 'Agent2' }
                     steps {
-                        bat '''
-                            set FLASK_APP=app\\api.py
-                            start python -m flask run
-                            start java -jar C:\\Users\\alsab\\Documents\\Wiremock\\wiremock-standalone-3.5.4.jar --port 9090 --root-dir test\\wiremock
-                            
-                            set PYTHONPATH=.
-                            python -m pytest --junitxml=result-rest.xml test\\rest
-                        '''
+                        sh 'whoami'
+                        sh 'hostname'
+                        unstash 'app'
+                        unstash 'test'
+                        unstash 'pytest'
+                        sh '''
+                            [ -f test/wiremock/wiremock-standalone-3.5.4.jar ] || wget https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.5.4/wiremock-standalone-3.5.4.jar -P test/wiremock
+                            export FLASK_APP=app/api.py
+                            (python3 -m flask run &)
+                            sleep 1
+                            (java -jar test/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir test/wiremock &)
+                            sleep 1
+                            '''
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            sh '''
+                            export PYTHONPATH=.
+                            python3 -m pytest -rp --junitxml=junit-rest.xml test/rest
+                            '''
+                        }
+                        stash includes: 'junit*.xml', name: 'Rest'
                     }
                 }
             }
         }
-        
-        stage('Render Results'){
+
+        stage('Render results') {
+            agent {label 'Agent1'}
             steps{
-                junit 'result*.xml'
+                sh 'whoami'
+                sh 'hostname'
+                unstash 'Rest'
+                junit 'junit*.xml'
                 echo 'Done!'
             }
         }
