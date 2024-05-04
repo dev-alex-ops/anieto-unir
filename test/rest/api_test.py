@@ -66,17 +66,19 @@ class TestApi(unittest.TestCase):
     def test_api_divide_0(self):
         with url_lock:
             url = f"{BASE_URL}/calc/divide/4/0"
-            try:
-                response0 = urlopen(url, timeout=DEFAULT_TIMEOUT)
-            except HTTPError as e:
-                self.assertEqual(
-                    e.code, http.client.NOT_ACCEPTABLE, f"Error en la petición API a {url}"
-                )
-                self.assertEqual(
-                    e.read().decode(), "Error: No se puede dividir por 0", "ERROR DIVIDE"
-                )
-        url_lock.release()
-            # Ya que esta conexión nunca se llega a abrir, dado el fallo obligado por el test, no es necesario cerrar la conexión.
+        try:
+            response0 = urlopen(url, timeout=DEFAULT_TIMEOUT)
+        except HTTPError as e:
+            self.assertEqual(
+                e.code, http.client.NOT_ACCEPTABLE, f"Error en la petición API a {url}"
+            )
+            self.assertEqual(
+                e.read().decode(), "Error: No se puede dividir por 0", "ERROR DIVIDE"
+            )
+        # El bloque 'finally' está fuera del bloque 'with', por lo que se ejecutará incluso si se produce una excepción.
+        finally:
+            # No es necesario cerrar la conexión que nunca se abrió.
+            pass
 
     def test_api_sqrt(self):
         with url_lock:
