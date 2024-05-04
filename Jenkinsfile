@@ -70,8 +70,8 @@ pipeline {
                 echo 'Done!'
             }
         }
-
-        post {
+    }
+    post {
         // Clean after build
             always {
                 cleanWs(cleanWhenNotBuilt: true,
@@ -85,5 +85,4 @@ pipeline {
                                 [pattern: './*', type: 'INCLUDE']])
             }
         }
-    }
 }
