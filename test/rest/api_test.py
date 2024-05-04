@@ -90,6 +90,8 @@ class TestApi(unittest.TestCase):
                 )
             finally:
                 response.close()
+        
+    url_lock.release()
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
