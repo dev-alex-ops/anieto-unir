@@ -52,4 +52,17 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            cleanWs(cleanWhenNotBuilt: true,
+                cleanWhenAborted: true,
+                cleanWhenFailure: true,
+                deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true,
+                patterns: [[pattern: '**/*', type: 'INCLUDE'],
+                        [pattern: '.propsfile', type: 'EXCLUDE']])
+            }
+        }
+    }
 }
