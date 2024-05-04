@@ -26,7 +26,7 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 export PYTHONPATH=.
-                                python3 -m pytest -r --junitxml=junit-unit.xml test/unit
+                                python3 -m pytest -rp --junitxml=junit-unit.xml test/unit
                             '''
                         }
                     }
@@ -51,7 +51,7 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                             export PYTHONPATH=.
-                            python3 -m pytest -r --junitxml=junit-rest.xml test/rest
+                            python3 -m pytest -rp --junitxml=junit-rest.xml test/rest
                             '''
                         }
                         stash includes: 'junit*.xml', name: 'Rest'
