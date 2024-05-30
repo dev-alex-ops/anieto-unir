@@ -48,7 +48,7 @@ pipeline {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {    
                         bat '''
                             set PYTHONPATH=%WORKSPACE%
-                            python -m coverage run --branch --source=app --omit=app\\__init.py__,app\\api.py -m pytest --junitxml=junit-unit.xml test\\unit
+                            python -m coverage run --branch --source=app --omit=app\\__init.py__,app\\api.py -m python -m pytest --junitxml=junit-unit.xml test\\unit
                         '''
                         junit 'junit*.xml'
                         }
