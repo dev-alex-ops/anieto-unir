@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Get Code') {
             steps {
-                git 'https://github.com/dev-alex-ops/anieto-unir', branch: 'feature_fix_coverage'
+                git url: 'https://github.com/dev-alex-ops/anieto-unir', branch: 'feature_fix_coverage'
             }
         }
 
