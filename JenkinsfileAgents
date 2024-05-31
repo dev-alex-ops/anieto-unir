@@ -53,11 +53,17 @@ pipeline {
                     steps {
                         sh 'whoami'
                         sh 'hostname'
+                        unstash 'app'
+                        unstash 'test'
+                        unstash 'pytest'
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 export PYTHONPATH=.
+                                ls -la
                                 python3 -m coverage run --branch --source=app --omit=app/__init__.py,app/api.py -m pytest --junitxml=junit-unit.xml test/unit
+                                python3 -m coverage xml
                             '''
+                            stash includes: 'coverage.xml', name: 'results'
                         }
                     }
                 }
@@ -67,8 +73,11 @@ pipeline {
                     steps {
                         sh 'whoami'
                         sh 'hostname'
+                        unstash 'app'
+                        unstash 'test'
+                        unstash 'pytest'
                         sh '''
-                            [ -f test/wiremock/wiremock-standalone-3.6-0.jar ] || wget https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.5.4/wiremock-standalone-3.6.0.jar -P test/wiremock
+                            [ -f test/wiremock/wiremock-standalone-3.6-0.jar ] || wget https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.6.0/wiremock-standalone-3.6.0.jar -P test/wiremock
                             export FLASK_APP=app/api.py
                             (python3 -m flask run &)
                             sleep 5
@@ -95,6 +104,10 @@ pipeline {
                         sh 'whoami'
                         sh 'hostname'
                         sh '''
+                            export FLASK_APP=app/api.py
+                            (python3 -m flask run)&
+                            sleep 3
+                            export PATH=$PATH:${JMETERPATH}
                             jmeter -n -t test/jmeter/flask.jmx -f -l flask.jtl
                         '''
                         perfReport sourceDataFiles: 'flask.jtl'
@@ -107,7 +120,7 @@ pipeline {
                         sh 'whoami'
                         sh 'hostname'
                         unstash 'rest'
-                        sh 'python3 -m coverage xml'
+                        unstash 'results'
                         catchError(buildResult: 'UNSTABLE', stageResult: 'Failure') {
                             cobertura coberturaReportFile: 'coverage.xml', onlyStable: false, failUnstable: false, conditionalCoverageTargets: '100,80,90', lineCoverageTargets: '100,85,95'
                         }
