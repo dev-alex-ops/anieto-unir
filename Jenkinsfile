@@ -70,6 +70,7 @@ pipeline {
         stage ('Cobertura') {
             steps {
                 bat 'python -m coverage xml'
+                bat 'python -m coverage report'
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     cobertura coberturaReportFile: 'coverage.xml', onlyStable: false, failUnstable: false, conditionalCoverageTargets: '100,80,90', lineCoverageTargets: '100,85,95'
                 }
