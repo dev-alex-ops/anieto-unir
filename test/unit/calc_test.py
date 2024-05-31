@@ -25,6 +25,11 @@ class TestCalculate(unittest.TestCase):
         self.assertEqual(1, self.calc.divide(2, 2))
         self.assertEqual(1.5, self.calc.divide(3, 2))
         self.assertRaises(TypeError, self.calc.divide, "2", 2)
+
+    def test_divide_method_fails_by_zero(self):
+        self.assertRaises(TypeError, self.calc.divide, 4, 0)
+        self.assertRaises(TypeError, self.calc.divide, 0, 0)
+        self.assertRaises(TypeError, self.calc.divide, -0, -0)
   
     def test_add_method_fails_with_nan_parameter(self):
         self.assertRaises(TypeError, self.calc.add, "2", 2)
@@ -61,11 +66,6 @@ class TestCalculate(unittest.TestCase):
         self.assertEqual(0, self.calc.substract(0, 0))
         self.assertEqual(0, self.calc.substract(0, 0))
         self.assertRaises(TypeError, self.calc.substract, "0", 0)
-    
-    def test_divide_method_fails_by_zero(self):
-        self.assertRaises(TypeError, self.calc.divide, 4, 0)
-        self.assertRaises(TypeError, self.calc.divide, 0, 0)
-        self.assertRaises(TypeError, self.calc.divide, -0, -0)
         
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
