@@ -49,6 +49,7 @@ pipeline {
                         bat '''
                             set PYTHONPATH=%WORKSPACE%
                             python -m coverage run --branch --source=app --omit=app\\__init.py__,app\\api.py -m pytest --junitxml=junit-unit.xml test\\unit
+                            python -m coverage xml
                         '''
                         junit 'junit*.xml'
                         }
@@ -69,7 +70,6 @@ pipeline {
         
         stage ('Cobertura') {
             steps {
-                bat 'python -m coverage xml'
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     cobertura coberturaReportFile: 'coverage.xml', onlyStable: false, failUnstable: false, conditionalCoverageTargets: '100,80,90', lineCoverageTargets: '100,85,95'
                 }
