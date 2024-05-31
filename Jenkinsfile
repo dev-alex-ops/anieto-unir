@@ -15,6 +15,7 @@ pipeline {
                 bat '''
                     set PYTHONPATH=.
                     python -m coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest --junitxml=junit-unit.xml test\\unit
+                    python -m coverage report
                     python -m coverage xml
                 '''
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
