@@ -94,6 +94,12 @@ pipeline {
                     }
                 }
 
+                
+            }
+        }
+
+        stage('Dependency tests'){
+            parallel {
                 stage('Performance') {
                     agent { label 'Agent2' }
                     steps {
@@ -109,20 +115,20 @@ pipeline {
                         perfReport sourceDataFiles: 'flask.jtl'
                     }
                 }
-            }
-        }
 
-        stage('Cobertura - Junit') {
-            agent { label 'Agent1' }
-            steps {
-                sh 'whoami'
-                sh 'hostname'
-                unstash 'rest'
-                unstash 'results'
-                catchError(buildResult: 'UNSTABLE', stageResult: 'Failure') {
-                    cobertura coberturaReportFile: 'coverage.xml', onlyStable: false, failUnstable: false, conditionalCoverageTargets: '100,80,90', lineCoverageTargets: '100,85,95'
+                stage('Cobertura - Junit') {
+                    agent { label 'Agent1' }
+                    steps {
+                        sh 'whoami'
+                        sh 'hostname'
+                        unstash 'rest'
+                        unstash 'results'
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'Failure') {
+                            cobertura coberturaReportFile: 'coverage.xml', onlyStable: false, failUnstable: false, conditionalCoverageTargets: '100,80,90', lineCoverageTargets: '100,85,95'
+                        }
+                        junit 'junit*.xml'
+                    }
                 }
-                junit 'junit*.xml'
             }
         }
     }
